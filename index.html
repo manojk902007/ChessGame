@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Chess</title>
+        <link rel="stylesheet" href="style.css"/>
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600@family=Cinzel:wght@400;600@display=swap" rel="stylesheet"/>
+    </head>
+    <body>
+        <div class="ambient">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+        </div>
+
+        <main class="app">
+            <header class="app-header">
+                <h1 class="title">♟ Chess</h1>
+                <p class="subtitle">Classic Chess</p>
+            </header>
+
+            <!-- Status bar -->
+            <div class="status-bar">
+                <div class="player-tag" id="tag-white">
+                    <span class="player-color white-dot"></span>
+                    <span>White</span>
+                </div>
+                <div class="status-message" id="status-message">White's turn</div>
+                <div class="player-tag" id="tag-black">
+                    <span class="player-color black-dot"></span>
+                    <span>Black</span>
+                </div>
+            </div>
+
+            <!-- Captured pieces -->
+            <div class="captured-row" id="captured-black">
+                <span class="captured-label">Captured</span>
+                <div class="captured-pieces" id="black-captured"></div>
+            </div>
+
+            <!-- Board wrapper with coordinates -->
+            <div class="board-wrapper">
+                <div class="coords-file" id="coords-rank-left"></div>
+                <div class="board-col">
+                    <div class="coords-rank" id="coords-file-top"></div>
+                    <div class="chess-board" id="chess-board"></div>
+                    <div class="coords-rank" id="coords-file-bottom"></div>
+                </div>
+                <div class="coords-file" id="coords-rank-right"></div>
+            </div>
+
+            <div class="captured-row" id="captured-white">
+                <span class="captured-label">Captured</span>
+                <div class="captured-pieces" id="white-captured"></div>
+            </div>
+
+            <!-- Controls -->
+             <div class="controls">
+                <div class="btn-restart" id="btn-restart">↺ New Game</div>
+                <button class="btn-flip" id="btn-flip">⇅ Flip Board</button>
+             </div>
+
+             <!-- Move history -->
+            <div class="move-history-panel">
+                <div class="history-title">Move History</div>
+                <div class="move-list" id="move-list"></div>
+            </div>
+        </main>
+
+        <!-- Promotion modal -->
+         <div class="modal-ovelay" id="promo-modal" style="display:none">
+            <div class="modal-box">
+                <div class="modal-title">Promote Pawn</div>
+                <div class="promo-choices" id="promo-choices"></div>
+            </div>
+         </div>
+
+         <!-- Game over modal -->
+          <div class="modal-overlay" id="gameover-modal" style="display:none">
+            <div class="modal-box">
+                <div class="modal-icon" id="gameover-icon">♔</div>
+                <div class="modal-title" id="gameover-title">Checkmate!</div>
+                <div class="modal-sub" id="gameover-sub">White wins</div>
+                <button class="btn-restart modal-btn" id="gameover-restart">Play Again</button>
+            </div>
+          </div>
+
+          <script src="script.js"></script>
+    </body>
+</html>
