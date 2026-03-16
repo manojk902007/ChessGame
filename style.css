@@ -67,7 +67,7 @@ body{
 @keyframes driftB { to { transform: translate(-60px, -80px);}}
 
 /* App Layout */
-.appp{
+.app{
     position: relative;
     z-index: 1;
     display: flex;
@@ -124,7 +124,8 @@ body{
 }
 .player-tag.active {color: var(--gold);}
 
-.player-dot{
+.player-dot,
+.player-color{
     width: 10px; height: 10px;
     border-radius: 50%;
     border: 1.5px solid var(--border);
@@ -169,7 +170,7 @@ body{
 .board-wrapper{
     display: flex;
     align-items: center;
-    gap: 4x;
+    gap: 4px;
 }
 .board-col{
     display: flex;
@@ -209,7 +210,7 @@ body{
 .chess-board{
     display: grid;
     grid-template-columns: repeat(8, var(--sq));
-    grid-template-columns: repeat(8, var(--sq));
+    grid-template-rows: repeat(8, var(--sq));
     border: 2px solid var(--gold-dim);
     border-radius: 6px;
     overflow: hidden;
@@ -230,21 +231,32 @@ body{
     cursor: pointer;
     transition: background 0.3s;
 }
-.square.lignt{ background: var(--white-sq);}
+.square.light{ background: var(--white-sq);}
 .square.dark{ background: var(--black-sq);}
 
 .square.selected { background: var(--selected); }
 .square.last-move { background: var(--last-move); }
-.square.in-chck { background: var(--check-sq); }
+.square.in-check { background: var(--check-sq); }
 
 /* Possible move indicator */
-.square.possible-move::after{
+.square.possible-move::after,
+.square.legal-move::after{
     content: '';
     position: absolute;
     width: 32%;
-    height: 325;
+    height: 32%;
     border-radius: 50%;
     background: var(--move-dot);
+    pointer-events: none;
+    animation: popIn 0.15s ease;
+}
+
+.square.legal-capture::after{
+    content: '';
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    border: 3px solid var(--move-dot);
     pointer-events: none;
     animation: popIn 0.15s ease;
 }
@@ -270,10 +282,10 @@ body{
 .piece:hover { transform: scale(1.08);}
 
 /* Piece move animation */
-@keyframe pieceLand{
+@keyframes pieceLand{
     0% { transform: scale(1.18) translateY(-4px);}
     60% { transform: scale(0.96) translateY(1px);}
-    100% { transform: scale(2) translateY(o);}
+    100% { transform: scale(1) translateY(0);}
 }
 .piece.landing { animation: pieceLand 0.22s ease forwards; }
 
@@ -312,7 +324,7 @@ body{
 }
 
 /* Move History */
-.move-history{
+.move-history-panel{
     width: 100%;
     max-width: calc(var(--sq)*8+48px);
     background: var(--surface);
@@ -345,7 +357,7 @@ body{
     transition: color 0.2s;
 }
 .move-entry.white-move { color: #c8bfaf; }
-.move-entry.blck-move { color: #7a7570; }
+.move-entry.black-move { color: #7a7570; }
 .move-entry:last-child{ color: var(--gold); }
 
 /* Modals */
@@ -357,7 +369,7 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100l;
+    z-index: 100;
     animation: fadeIn 0.25s ease;
 }
 @keyframes fadeIn{ from { opacity: 0; } }
@@ -369,10 +381,10 @@ body{
     padding: 36px 44px;
     text-align: center;
     box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(200, 169, 110, 0.1);
-    animation: slideup 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
 @keyframes slideUp{
-    from { transform: translateY(30px); opacty: 0; }
+    from { transform: translateY(30px); opacity: 0; }
 }
 
 .modal-icon {
