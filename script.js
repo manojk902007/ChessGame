@@ -337,7 +337,7 @@ function initGame() {
         btnComputer.classList.add('active');
         btnManual.classList.remove('active');
     }
-    
+
     toggleAIDifficultyButtons(gameMode === "computer");
 
     renderBoard();
@@ -621,9 +621,63 @@ function recordMove(piece, fr, fc, tr, tc, special, capturedPiece, resultingPiec
 const PIECE_VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
 
 function computerMove() {
-    
-    if (gameOver || promotionPending) return;
 
+    if(gameOver || promotionPending) return;
+
+    let bestMove;
+
+    if(aiDifficulty === "Easy") {
+        bestMove = getRandomMove();
+    }
+    else if(aiDifficulty === "Medium") {
+        bestMove = minimaxRoot(2);
+    }
+    else if(aiDifficulty === "Hard") {
+        bestMove = minimaxRoot(4);
+    }
+    
+    if (bestMove) {
+        executeMove(bestMove.from.row, bestMove.from.col, bestMove.move);
+    }
+
+    // if (gameOver || promotionPending) return;
+
+    // let allMoves = [];
+
+    // for (let r = 0; r < 8; r++)
+    //     for (let c = 0; c < 8; c++) {
+    //         const piece = board[r][c];
+    //         if(piece && isOwn(piece, turn)) {
+    //             const moves = legalMovesFor(board, r, c, turn, enPassantTarget, castlingRights);
+    //             moves.forEach(mv => allMoves.push({ from: {row: r, col: c}, move: mv }));
+    //         }
+    //     }
+    // if (allMoves.length === 0) return;
+    // let chosenMove;
+    // if (aiDifficulty === "Easy") {
+    //     chosenMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+    // } else if (aiDifficulty === "Medium") {
+    //     allMoves.sort((a, b) => {
+    //         const capA = board[a.move.row][a.move.col] ? 1 : 0;
+    //         const capB = board[b.move.row][b.move.col] ? 1 : 0;
+    //         return capB - capA;
+    //     });
+    //     chosenMove = allMoves[Math.floor(Math.random()* Math.min(5, allMoves.length))];
+    // } else if (aiDifficulty === "Hard") {
+    //     let bestScore = -Infinity;
+    //     allMoves.forEach(mv => {
+    //         const newBoard = applyMoveToBoard(cloneBoard(board), mv.from.row, mv.from.col, mv.move, turn);
+    //         const score = evaluateBoard(newBoard);
+    //         if (score > bestScore) {
+    //             bestScore = score;
+    //             chosenMove = mv;
+    //         }
+    //     });
+    // }
+    // executeMove(chosenMove.from.row, chosenMove.from.col, chosenMove.move);
+}
+
+function getRandomMove() {
     let allMoves = [];
 
     for (let r = 0; r < 8; r++)
@@ -634,37 +688,79 @@ function computerMove() {
                 moves.forEach(mv => allMoves.push({ from: {row: r, col: c}, move: mv }));
             }
         }
-    if (allMoves.length === 0) return;
-    let chosenMove;
-    if (aiDifficulty === "Easy") {
-        chosenMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-    } else if (aiDifficulty === "Medium") {
-        allMoves.sort((a, b) => {
-            const capA = board[a.move.row][a.move.col] ? 1 : 0;
-            const capB = board[b.move.row][b.move.col] ? 1 : 0;
-            return capB - capA;
-        });
-        chosenMove = allMoves[Math.floor(Math.random()* Math.min(5, allMoves.length))];
-    } else if (aiDifficulty === "Hard") {
-        let bestScore = -Infinity;
-        allMoves.forEach(mv => {
-            const newBoard = applyMoveToBoard(cloneBoard(board), mv.from.row, mv.from.col, mv.move, turn);
-            const score = evaluateBoard(newBoard);
-            if (score > bestScore) {
-                bestScore = score;
-                chosenMove = mv;
-            }
-        });
-    }
-        executeMove(chosenMove.from.row, chosenMove.from.col, chosenMove.move);
-    // allMoves.sort((a, b) => {
-    //     const capA = board[a.move.row][a.move.col] ? 1 : 0;
-    //     const capB = board[b.move.row][b.move.col] ? 1 : 0;
-    //     return capB - capA;
-    // });
-    // const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-    // executeMove(randomMove.from.row, randomMove.from.col, randomMove.move);
+        return allMoves[Math.floor(Math.random() * allMoves.length)];
 }
+
+function minimaxRoot(depth) {
+    let bestScore = -Infinity;
+    let bestMove = null;
+
+    let allMoves = [];
+
+    for (let r = 0; r < 8; r++)
+        for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if(piece && isOwn(piece, turn)) {
+            const moves = legalMovesFor(board, r, c, turn, enPassantTarget, castlingRights);
+            moves.forEach(mv => allMoves.push({ from: {row: r, col: c}, move: mv }));
+        }
+    }
+
+    for(let mv of allMoves) {
+        const newBoard = applyMoveToBoard(cloneBoard(board), mv.from.row, mv.from.col, mv.move, turn);
+        const score = minimax(newBoard, depth - 1, false, -Infinity, Infinity);
+        if(score > bestScore) {
+            bestScore = score;
+            bestMove = mv;
+        }
+    }
+    return bestMove;
+}
+
+function minimax(b, depth, isMaximizing, alpha, beta) {
+    if (depth === 0) return evaluateBoard(b);
+
+    let color = isMaximizing ? turn : enemy(turn);
+    
+    let allMoves = [];
+
+    for (let r = 0; r < 8; r++)
+        for (let c = 0; c < 8; c++) {
+        const piece = b[r][c];
+        if(piece && isOwn(piece, color)) {
+            const moves = legalMovesFor(b, r, c, color, enPassantTarget, castlingRights);
+            moves.forEach(mv => allMoves.push({ from: {row: r, col: c}, move: mv }));
+        }
+    }
+
+    if (isMaximizing) {
+        let maxEval = -Infinity;
+
+        for(let mv of allMoves) {
+            const newBoard = applyMoveToBoard(cloneBoard(b), mv.from.row, mv.from.col, mv.move, color);
+            const evalScore = minimax(newBoard, depth - 1, false, alpha, beta);
+
+            maxEval = Math.max(maxEval, evalScore);
+            alpha = Math.max(alpha, evalScore);
+            if(beta <= alpha) break;
+        }
+        return maxEval;
+    } else {
+        let minEval = Infinity;
+
+        for(let mv of allMoves) {
+            const newBoard = applyMoveToBoard(cloneBoard(b), mv.from.row, mv.from.col, mv.move, color);
+            const evalScore = minimax(newBoard, depth - 1, true, alpha, beta);
+
+            minEval = Math.min(minEval, evalScore);
+            beta = Math.min(beta, evalScore);
+
+            if (beta <= alpha) break;
+        }
+        return minEval;
+    }
+}
+
 
 function evaluateBoard(b) {
     let score = 0;
@@ -674,8 +770,10 @@ function evaluateBoard(b) {
             const piece = b[r][c];
             if (!piece) continue;
             const value = PIECE_VALUES[piece.toLowerCase()];
-            if (isWhite(piece)) score -= value;
-            else score += value;
+            const centerBonus = (r>=2 && r<=5 && c>=2 && c<=5) ? 0.3 : 0;
+
+            if(isWhite(piece)) score -= value + centerBonus;
+            else score += value + centerBonus;
         }
     return score;
 }
