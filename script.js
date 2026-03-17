@@ -29,6 +29,7 @@ let promotionPending = false;
 let gameOver = false;
 let gameMode = "manual";
 let aiDifficulty = "Medium";
+let gameStack = [];
 
 const boardEl = document.getElementById('chess-board');
 const statusMsg = document.getElementById('status-message');
@@ -50,6 +51,19 @@ const aiMedium = document.getElementById('ai-medium');
 const aiHard = document.getElementById('ai-hard');
 
 setAIDifficulty("Medium");
+
+function saveGameState() {
+    gameStack.push({
+        board: cloneBoard(board),
+        turn,
+        enPassantTarget: enPassantTarget ? { ...enPassantTarget } : null,
+        castlingRights: { ...castlingRights },
+        moveHistory: [...moveHistory],
+        capturedByWhite: [...capturedByWhite],
+        capturedByBlack: [...capturedByBlack],
+        lastMove: lastMove ? {...lastMove} : null
+    });
+}
 
 function setAIDifficulty(level) {
     aiDifficulty = level;
@@ -79,6 +93,16 @@ btnComputer.addEventListener('click', () => {
     btnComputer.classList.add('active');
     btnManual.classList.remove('active');
     toggleAIDifficultyButtons(true);
+});
+
+document.getElementById('btn-undo').addEventListener('click', () => {
+    if(gameMode === "computer") {
+        undoMove();
+        undoMove();
+    }
+    else {
+        undoMove();
+    }
 });
 
 document.getElementById('btn-restart').addEventListener('click', initGame);
@@ -463,6 +487,7 @@ function onSquareClick(r, c) {
 }
 
 async function executeMove(fr, fc, mv) {
+    saveGameState();
     const {row: tr, col: tc, special} = mv;
     const piece = board[fr][fc];
     const captured = board[tr][tc];
@@ -785,6 +810,31 @@ function toggleAIDifficultyButtons(show) {
         btn.style.opacity = show ? '1' : '0.4';
         });
     }
+
+function undoMove() {
+    if (gameStack.length === 0) return;
+
+    const prev = gameStack.pop();
+
+    board = cloneBoard(prev.board);
+    turn = prev.turn;
+    enPassantTarget = prev.enPassantTarget;
+    castlingRights = { ...prev.castlingRights };
+    moveHistory = [...prev.moveHistory];
+    capturedByWhite = [...prev.capturedByWhite];
+    capturedByBlack = [...prev.capturedByBlack];
+    lastMove = prev.lastMove;
+
+    selected = null;
+    legalMoves = [];
+    promotionPending = false;
+    gameOver = false;
+
+    renderBoard();
+    renderMoveHistory();
+    renderCaptured();
+    updateStatus();
+}
 
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 initGame();
