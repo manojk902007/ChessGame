@@ -446,6 +446,28 @@ body{
     transform: scale(1.12);
 }
 
+.btn-mode{
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1px solid var(--gold-dim);
+    background: transparent;
+    color: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+}
+
+.btn-mode:hover{
+    background: rgba(200, 169, 110, 0.1)
+}
+
+.btn-mode.active{
+    background: var(--gold);
+    color: #000;
+}
+
 /* Responsive */
 @media(max-width: 520px){
     :root{ --sq: clamp(38px, 11vw, 52px);}

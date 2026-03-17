@@ -27,6 +27,7 @@ let capturedByBlack = [];
 let boardFlipped = false;
 let promotionPending = false;
 let gameOver = false;
+let gameMode = "computer";
 
 const boardEl = document.getElementById('chess-board');
 const statusMsg = document.getElementById('status-message');
@@ -41,6 +42,20 @@ const gameoverTitle = document.getElementById('gameover-title');
 const gameoverModal = document.getElementById('gameover-modal');
 const gameoverSub = document.getElementById('gameover-sub');
 const gameoverIcon = document.getElementById('gameover-icon');
+const btnManual = document.getElementById('btn-manual');
+const btnComputer = document.getElementById('btn-computer');
+
+btnManual.addEventListener('click', () => {
+    gameMode = "manual";
+    btnManual.classList.add('active');
+    btnComputer.classList.remove('active');
+});
+
+btnComputer.addEventListener('click', () => {
+    gameMode = "computer";
+    btnComputer.classList.add('active');
+    btnManual.classList.remove('active');
+});
 
 document.getElementById('btn-restart').addEventListener('click', initGame);
 document.getElementById('btn-flip').addEventListener('click', () => {
@@ -369,7 +384,7 @@ function updateStatus() {
 
     const inCheck = isInCheck(board, turn);
     if (inCheck) {
-        statusMsg.textContent = `${cap( turn)} is in check!`;
+        statusMsg.textContent = `${cap(turn)} is in check!`;
     } else {
         statusMsg.textContent = `${cap(turn)}'s turn`;
     }
@@ -490,7 +505,7 @@ async function executeMove(fr, fc, mv) {
     }
 
     checkGameEnd();
-    if (!gameOver && turn === 'Black') {
+    if (!gameOver && !promotionPending && gameMode === "computer" && turn === 'Black') {
     setTimeout(computerMove, 500);
 }
 }
@@ -584,6 +599,11 @@ function computerMove() {
             }
         }
     if (allMoves.length === 0) return;
+    allMoves.sort((a, b) => {
+        const capA = board[a.move.row][a.move.col] ? 1 : 0;
+        const capB = board[b.move.row][b.move.col] ? 1 : 0;
+        return capB - capA;
+    });
     const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
     executeMove(randomMove.from.row, randomMove.from.col, randomMove.move);
 }
