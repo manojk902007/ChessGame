@@ -468,6 +468,10 @@ body{
     color: #000;
 }
 
+#ai-easy, #ai-medium, #ai-hard{
+    display: none;
+}
+
 /* Responsive */
 @media(max-width: 520px){
     :root{ --sq: clamp(38px, 11vw, 52px);}

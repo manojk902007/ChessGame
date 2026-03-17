@@ -27,7 +27,7 @@ let capturedByBlack = [];
 let boardFlipped = false;
 let promotionPending = false;
 let gameOver = false;
-let gameMode = "computer";
+let gameMode = "manual";
 let aiDifficulty = "Medium";
 
 const boardEl = document.getElementById('chess-board');
@@ -49,6 +49,8 @@ const aiEasy = document.getElementById('ai-easy');
 const aiMedium = document.getElementById('ai-medium');
 const aiHard = document.getElementById('ai-hard');
 
+setAIDifficulty("Medium");
+
 function setAIDifficulty(level) {
     aiDifficulty = level;
 
@@ -69,12 +71,14 @@ btnManual.addEventListener('click', () => {
     gameMode = "manual";
     btnManual.classList.add('active');
     btnComputer.classList.remove('active');
+    toggleAIDifficultyButtons(false);
 });
 
 btnComputer.addEventListener('click', () => {
     gameMode = "computer";
     btnComputer.classList.add('active');
     btnManual.classList.remove('active');
+    toggleAIDifficultyButtons(true);
 });
 
 document.getElementById('btn-restart').addEventListener('click', initGame);
@@ -325,6 +329,16 @@ function initGame() {
     gameOver = false;
     promoteModal.style.display = 'none';
     gameoverModal.style.display = 'none';
+
+    if(gameMode === "manual") {
+        btnManual.classList.add('active');
+        btnComputer.classList.remove('active');
+    } else {
+        btnComputer.classList.add('active');
+        btnManual.classList.remove('active');
+    }
+    
+    toggleAIDifficultyButtons(gameMode === "computer");
 
     renderBoard();
     updateStatus();
@@ -661,11 +675,18 @@ function evaluateBoard(b) {
             if (!piece) continue;
             const value = PIECE_VALUES[piece.toLowerCase()];
             if (isWhite(piece)) score -= value;
-            else score -= value;
+            else score += value;
         }
     return score;
 }
 
+function toggleAIDifficultyButtons(show) {
+    [aiEasy, aiMedium, aiHard].forEach(btn => {
+        btn.style.display = show ? 'inline-block' : 'none';
+        btn.disabled = !show;
+        btn.style.opacity = show ? '1' : '0.4';
+        });
+    }
 
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 initGame();
