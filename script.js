@@ -28,6 +28,7 @@ let boardFlipped = false;
 let promotionPending = false;
 let gameOver = false;
 let gameMode = "computer";
+let aiDifficulty = "Medium";
 
 const boardEl = document.getElementById('chess-board');
 const statusMsg = document.getElementById('status-message');
@@ -44,6 +45,25 @@ const gameoverSub = document.getElementById('gameover-sub');
 const gameoverIcon = document.getElementById('gameover-icon');
 const btnManual = document.getElementById('btn-manual');
 const btnComputer = document.getElementById('btn-computer');
+const aiEasy = document.getElementById('ai-easy');
+const aiMedium = document.getElementById('ai-medium');
+const aiHard = document.getElementById('ai-hard');
+
+function setAIDifficulty(level) {
+    aiDifficulty = level;
+
+    aiEasy.classList.remove('active');
+    aiMedium.classList.remove('active');
+    aiHard.classList.remove('active');
+
+    if (level === 'Easy') aiEasy.classList.add('active');
+    else if (level === 'Medium') aiMedium.classList.add('active');
+    else if (level === 'Hard') aiHard.classList.add('active');
+}
+
+aiEasy.addEventListener('click', () => setAIDifficulty('Easy'));
+aiMedium.addEventListener('click', () => setAIDifficulty('Medium'));
+aiHard.addEventListener('click', () => setAIDifficulty('Hard'));
 
 btnManual.addEventListener('click', () => {
     gameMode = "manual";
@@ -584,6 +604,8 @@ function recordMove(piece, fr, fc, tr, tc, special, capturedPiece, resultingPiec
     moveHistory.push(notation);
 }
 
+const PIECE_VALUES = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 };
+
 function computerMove() {
     
     if (gameOver || promotionPending) return;
@@ -599,14 +621,51 @@ function computerMove() {
             }
         }
     if (allMoves.length === 0) return;
-    allMoves.sort((a, b) => {
-        const capA = board[a.move.row][a.move.col] ? 1 : 0;
-        const capB = board[b.move.row][b.move.col] ? 1 : 0;
-        return capB - capA;
-    });
-    const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-    executeMove(randomMove.from.row, randomMove.from.col, randomMove.move);
+    let chosenMove;
+    if (aiDifficulty === "Easy") {
+        chosenMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+    } else if (aiDifficulty === "Medium") {
+        allMoves.sort((a, b) => {
+            const capA = board[a.move.row][a.move.col] ? 1 : 0;
+            const capB = board[b.move.row][b.move.col] ? 1 : 0;
+            return capB - capA;
+        });
+        chosenMove = allMoves[Math.floor(Math.random()* Math.min(5, allMoves.length))];
+    } else if (aiDifficulty === "Hard") {
+        let bestScore = -Infinity;
+        allMoves.forEach(mv => {
+            const newBoard = applyMoveToBoard(cloneBoard(board), mv.from.row, mv.from.col, mv.move, turn);
+            const score = evaluateBoard(newBoard);
+            if (score > bestScore) {
+                bestScore = score;
+                chosenMove = mv;
+            }
+        });
+    }
+        executeMove(chosenMove.from.row, chosenMove.from.col, chosenMove.move);
+    // allMoves.sort((a, b) => {
+    //     const capA = board[a.move.row][a.move.col] ? 1 : 0;
+    //     const capB = board[b.move.row][b.move.col] ? 1 : 0;
+    //     return capB - capA;
+    // });
+    // const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+    // executeMove(randomMove.from.row, randomMove.from.col, randomMove.move);
 }
+
+function evaluateBoard(b) {
+    let score = 0;
+
+    for (let r = 0; r < 8; r++)
+        for (let c = 0; c < 8; c++) {
+            const piece = b[r][c];
+            if (!piece) continue;
+            const value = PIECE_VALUES[piece.toLowerCase()];
+            if (isWhite(piece)) score -= value;
+            else score -= value;
+        }
+    return score;
+}
+
 
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 initGame();
