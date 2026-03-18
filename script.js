@@ -32,6 +32,7 @@ let gameOver = false;
 let gameMode = "manual";
 let aiDifficulty = "Medium";
 let gameStack = [];
+let playcolor = "White";
 
 const boardEl = document.getElementById('chess-board');
 const statusMsg = document.getElementById('status-message');
@@ -51,6 +52,20 @@ const btnComputer = document.getElementById('btn-computer');
 const aiEasy = document.getElementById('ai-easy');
 const aiMedium = document.getElementById('ai-medium');
 const aiHard = document.getElementById('ai-hard');
+const playWhiteBtn = document.getElementById('play-white');
+const playBlackBtn = document.getElementById('play-black');
+
+playWhiteBtn.addEventListener('click', () => {
+    playcolor = "White";
+    document.querySelectorAll('#play-white, #play-black').forEach(btn => btn.classList.remove('active'));
+    playWhiteBtn.classList.add('active');
+});
+
+playBlackBtn.addEventListener('click', () => {
+    playcolor = "Black";
+    document.querySelectorAll('#play-white, #play-black').forEach(btn => btn.classList.remove('active'));
+    playBlackBtn.classList.add('active');
+});
 
 setAIDifficulty("Medium");
 
@@ -356,6 +371,14 @@ function initGame() {
     promoteModal.style.display = 'none';
     gameoverModal.style.display = 'none';
 
+    if(playcolor === "White") {
+        playWhiteBtn.classList.add('active');
+        playBlackBtn.classList.remove('active');
+    } else {
+        playBlackBtn.classList.add('active');
+        playWhiteBtn.classList.remove('active');
+    }
+
     if(gameMode === "manual") {
         btnManual.classList.add('active');
         btnComputer.classList.remove('active');
@@ -370,6 +393,12 @@ function initGame() {
     updateStatus();
     renderMoveHistory();
     renderCaptured();
+
+    
+    if(gameMode === "computer" && turn === 'Black') {
+        turn = 'White';
+        setTimeout(computerMove, 500);
+    }
 }
 
 function renderBoard() {
@@ -476,6 +505,8 @@ function renderCaptured() {
 function onSquareClick(r, c) {
     if (gameOver || promotionPending) return;
 
+    if (gameMode === "computer" && turn !== playcolor) return;
+
     const mv = legalMoves.find(m => m.row === r && m.col === c);
     if (mv && selected) {
         executeMove(selected.row, selected.col, mv);
@@ -573,7 +604,7 @@ async function executeMove(fr, fc, mv) {
     }
 
     checkGameEnd();
-    if (!gameOver && !promotionPending && gameMode === "computer" && turn === 'Black') {
+    if (!gameOver && !promotionPending && gameMode === "computer" && turn !== playcolor) {
     setTimeout(computerMove, 500);
 }
 }
