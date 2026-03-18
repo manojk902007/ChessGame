@@ -1,6 +1,8 @@
 const PIECES = {
-    K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
-    k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟',
+    // K: '♔', Q: '♕', R: '♖', B: '♗', N: '♘', P: '♙',
+    // k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟',
+    K: 'White-King.png', Q: 'White-Queen.png', R: 'White-Rook.png', B: 'White-Bishop.png', N: 'White-Knight.png', P: 'White-Pawn.png',
+    k: 'Black-King.png', q: 'Black-Queen.png', r: 'Black-Rook.png', b: 'Black-Bishop.png', n: 'Black-Knight.png', p: 'Black-Pawn.png'
 }
 
 const START_FEN = [
@@ -399,10 +401,14 @@ function renderBoard() {
             }
 
             if (board[vr][vc]) {
-                const pieceEl = document.createElement('span');
-                pieceEl.className = 'piece';
-                pieceEl.textContent = PIECES[board[vr][vc]];
-                sq.appendChild(pieceEl);
+                // const pieceEl = document.createElement('span');
+                // pieceEl.className = 'piece';
+                // pieceEl.textContent = PIECES[board[vr][vc]];
+                // sq.appendChild(pieceEl);
+                const img = document.createElement('img');
+                img.src = PIECES[board[vr][vc]];
+                img.className = 'piece';
+                sq.appendChild(img);
             }
 
             sq.addEventListener('click', () => onSquareClick(vr, vc));
@@ -460,8 +466,11 @@ function renderMoveHistory() {
 }
 
 function renderCaptured() {
-    whiteCaptured.textContent = capturedByWhite.map(p => PIECES[p]).join(' ');
-    blackCaptured.textContent = capturedByBlack.map(p => PIECES[p]).join(' ');
+    // whiteCaptured.textContent = capturedByWhite.map(p => PIECES[p]).join(' ');
+    // blackCaptured.textContent = capturedByBlack.map(p => PIECES[p]).join(' ');
+
+    whiteCaptured.innerHTML = capturedByWhite.map(p => '<img src="'+PIECES[p]+'" class="piece small">').join('');
+    blackCaptured.innerHTML = capturedByBlack.map(p => '<img src="'+PIECES[p]+'" class="piece small">').join('');
 }
 
 function onSquareClick(r, c) {

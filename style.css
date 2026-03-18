@@ -8,8 +8,8 @@
     --gold-dim: #7a6440;
     --text: #e8e2d9;
     --text-muted: #7a7570;
-    --white-sq: #f0e9d8;
-    --black-sq: #3d2f20;
+    --white-sq: #f0d9b5;
+    --black-sq: #b58863;
     --highlight: rgba(200, 169, 110, 0.45);
     --move-dot: rgba(200, 169, 110, 0.55);
     --check-sq: rgba(220, 60, 60, 0.55);
@@ -268,6 +268,10 @@ body{
 
 /* Pieces */
 .piece{
+    width: 190%;
+    height: 190%;
+    object-fit: contain;
+    pointer-events: none;
     font-size: calc(var(--sq)*0.72);
     line-height: 1;
     user-select: none;
@@ -278,6 +282,10 @@ body{
         0 1 3px rgba(0,0,0,0.5),
         0 0 1px rgba(0,0,0,0.8);
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+}
+.piece.small{
+    width: 20px;
+    height: 20px;
 }
 .piece:hover { transform: scale(1.08);}
 
