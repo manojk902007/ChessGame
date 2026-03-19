@@ -844,12 +844,14 @@ function evaluateBoard(b) {
 }
 
 function toggleAIDifficultyButtons(show) {
-    [aiEasy, aiMedium, aiHard].forEach(btn => {
-        btn.style.display = show ? 'inline-block' : 'none';
-        btn.disabled = !show;
-        btn.style.opacity = show ? '1' : '0.4';
-        });
-    }
+    // [aiEasy, aiMedium, aiHard].forEach(btn => {
+    //     btn.style.display = show ? 'inline-block' : 'none';
+    //     btn.disabled = !show;
+    //     btn.style.opacity = show ? '1' : '0.4';
+    //     });
+    const group = document.getElementById('ai-group');
+    group.style.display = show ? 'flex' : 'none';
+}
 
 function undoMove() {
     if (gameStack.length === 0) return;

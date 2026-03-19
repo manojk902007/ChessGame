@@ -56,20 +56,27 @@
 
             <!-- Controls -->
              <div class="controls">
-                <div class="btn-restart" id="btn-restart">↺ New Game</div>
-                <button class="btn-flip" id="btn-flip">⇅ Flip Board</button>
+                <div class="control-group">
+                    <div class="control-btn primary" id="btn-restart">↺ New Game</div>
+                    <button class="control-btn" id="btn-flip">⇅ Flip Board</button>
+                    <button class="control-btn" id="btn-undo">⤺ Undo</button>
+                </div>
 
-                <button class="btn-mode" id="btn-manual">Manual</button>
-                <button class="btn-mode" id="btn-computer">Computer</button>
+                <div class="control-group">
+                    <button class="control-btn mode active" id="btn-manual">Manual</button>
+                    <button class="control-btn mode" id="btn-computer">Computer</button>
+                </div>
 
-                <button class="btn-mode" id="ai-easy">Easy</button>
-                <button class="btn-mode" id="ai-medium">Medium</button>
-                <button class="btn-mode" id="ai-hard">Hard</button>
+                <div class="control-group ai-group" id="ai-group">
+                    <button class="control-btn ai" id="ai-easy">Easy</button>
+                    <button class="control-btn ai active" id="ai-medium">Medium</button>
+                    <button class="control-btn ai" id="ai-hard">Hard</button>
+                </div>
 
-                <button class="btn-mode" id="btn-undo">Undo</button>
-
-                <button class="btn-mode" id="play-white">Play White</button>
-                <button class="btn-mode" id="play-black">Play Black</button>
+                <div class="control-group">
+                    <button class="control-btn side active" id="play-white">♔ White</button>
+                    <button class="control-btn side" id="play-black">♚ Black</button>
+                </div>
              </div>
 
              <!-- Move history -->
