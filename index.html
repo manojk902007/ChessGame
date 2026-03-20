@@ -72,11 +72,6 @@
                     <button class="control-btn ai active" id="ai-medium">Medium</button>
                     <button class="control-btn ai" id="ai-hard">Hard</button>
                 </div>
-
-                <div class="control-group">
-                    <button class="control-btn side active" id="play-white">♔ White</button>
-                    <button class="control-btn side" id="play-black">♚ Black</button>
-                </div>
              </div>
 
              <!-- Move history -->
@@ -101,6 +96,17 @@
                 <div class="modal-title" id="gameover-title">Checkmate!</div>
                 <div class="modal-sub" id="gameover-sub">White wins</div>
                 <button class="btn-restart modal-btn" id="gameover-restart">Play Again</button>
+            </div>
+          </div>
+
+          <!-- Player Selection Modal -->
+          <div class="modal-overlay" id="player-modal" style="display:none">
+            <div class="modal-box">
+                <div class="modal-title">Choose Your Side</div>
+                <div class="promo-choices">
+                    <div class="promo-piece" id="choose-white">White ♔</div>
+                    <div class="promo-piece" id="choose-black">Black ♚</div>
+                </div>
             </div>
           </div>
 

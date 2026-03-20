@@ -54,17 +54,20 @@ const aiMedium = document.getElementById('ai-medium');
 const aiHard = document.getElementById('ai-hard');
 const playWhiteBtn = document.getElementById('play-white');
 const playBlackBtn = document.getElementById('play-black');
+const playerModal = document.getElementById('player-modal');
+const chooseWhite = document.getElementById('choose-white');
+const chooseBlack = document.getElementById('choose-black');
 
-playWhiteBtn.addEventListener('click', () => {
+chooseWhite.addEventListener('click', () => {
     playcolor = "White";
-    document.querySelectorAll('#play-white, #play-black').forEach(btn => btn.classList.remove('active'));
-    playWhiteBtn.classList.add('active');
+    playerModal.style.display = 'none';
+    initGame();
 });
 
-playBlackBtn.addEventListener('click', () => {
+chooseBlack.addEventListener('click', () => {
     playcolor = "Black";
-    document.querySelectorAll('#play-white, #play-black').forEach(btn => btn.classList.remove('active'));
-    playBlackBtn.classList.add('active');
+    playerModal.style.display = 'none';
+    initGame();
 });
 
 setAIDifficulty("Medium");
@@ -110,6 +113,8 @@ btnComputer.addEventListener('click', () => {
     btnComputer.classList.add('active');
     btnManual.classList.remove('active');
     toggleAIDifficultyButtons(true);
+
+    playerModal.style.display = 'flex';
 });
 
 document.getElementById('btn-undo').addEventListener('click', () => {
@@ -142,6 +147,10 @@ const isOwn = (p, color) => color === 'White' ? isWhite(p) : isBlack(p);
 const enemy = (color) => color === 'White' ? 'Black' : 'White';
 
 const onBoard = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;
+
+function isAITurn() {
+    return gameMode === "computer" && turn !== playcolor;
+}
 
 function findKing(b, color) {
     const king = color === 'White' ? 'K' : 'k';
@@ -371,12 +380,10 @@ function initGame() {
     promoteModal.style.display = 'none';
     gameoverModal.style.display = 'none';
 
-    if(playcolor === "White") {
-        playWhiteBtn.classList.add('active');
-        playBlackBtn.classList.remove('active');
-    } else {
-        playBlackBtn.classList.add('active');
-        playWhiteBtn.classList.remove('active');
+    if(gameMode === "computer" && playcolor === "Black") {
+        setTimeout(() => {
+            computerMove();
+        }, 500);
     }
 
     if(gameMode === "manual") {
@@ -393,12 +400,6 @@ function initGame() {
     updateStatus();
     renderMoveHistory();
     renderCaptured();
-
-    
-    if(gameMode === "computer" && turn === 'Black') {
-        turn = 'White';
-        setTimeout(computerMove, 500);
-    }
 }
 
 function renderBoard() {
@@ -604,8 +605,8 @@ async function executeMove(fr, fc, mv) {
     }
 
     checkGameEnd();
-    if (!gameOver && !promotionPending && gameMode === "computer" && turn !== playcolor) {
-    setTimeout(computerMove, 500);
+    if (!gameOver && !promotionPending && isAITurn()) {
+        setTimeout(computerMove, 500);
 }
 }
 

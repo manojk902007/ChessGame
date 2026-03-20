@@ -531,10 +531,6 @@ body{
     color: #000;
 }
 
-#ai-easy, #ai-medium, #ai-hard{
-    display: none;
-}
-
 /* Responsive */
 @media(max-width: 520px){
     body{
@@ -567,4 +563,9 @@ body{
         min-height: 44px;
         font-size: 0.7rem;
     }
+}
+
+#player-modal .promo-piece:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(200,169,110,0.5);
 }
