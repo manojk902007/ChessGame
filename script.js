@@ -774,7 +774,7 @@ function minimaxRoot(depth) {
 
     for(let mv of allMoves) {
         const newBoard = applyMoveToBoard(cloneBoard(board), mv.from.row, mv.from.col, mv.move, turn);
-        const score = minimax(newBoard, depth - 1, false, -Infinity, Infinity);
+        const score = minimax(newBoard, depth - 1, false, -Infinity, Infinity, turn);
         if(score > bestScore) {
             bestScore = score;
             bestMove = mv;
@@ -783,10 +783,10 @@ function minimaxRoot(depth) {
     return bestMove;
 }
 
-function minimax(b, depth, isMaximizing, alpha, beta) {
-    if (depth === 0) return evaluateBoard(b);
+function minimax(b, depth, isMaximizing, alpha, beta, aiColor) {
+    if (depth === 0) return evaluateBoard(b, aiColor);
 
-    let color = isMaximizing ? turn : enemy(turn);
+    let color = isMaximizing ? aiColor : enemy(aiColor);
     
     let allMoves = [];
 
@@ -804,7 +804,7 @@ function minimax(b, depth, isMaximizing, alpha, beta) {
 
         for(let mv of allMoves) {
             const newBoard = applyMoveToBoard(cloneBoard(b), mv.from.row, mv.from.col, mv.move, color);
-            const evalScore = minimax(newBoard, depth - 1, false, alpha, beta);
+            const evalScore = minimax(newBoard, depth - 1, false, alpha, beta, aiColor);
 
             maxEval = Math.max(maxEval, evalScore);
             alpha = Math.max(alpha, evalScore);
@@ -816,7 +816,7 @@ function minimax(b, depth, isMaximizing, alpha, beta) {
 
         for(let mv of allMoves) {
             const newBoard = applyMoveToBoard(cloneBoard(b), mv.from.row, mv.from.col, mv.move, color);
-            const evalScore = minimax(newBoard, depth - 1, true, alpha, beta);
+            const evalScore = minimax(newBoard, depth - 1, true, alpha, beta, aiColor);
 
             minEval = Math.min(minEval, evalScore);
             beta = Math.min(beta, evalScore);
@@ -828,7 +828,7 @@ function minimax(b, depth, isMaximizing, alpha, beta) {
 }
 
 
-function evaluateBoard(b) {
+function evaluateBoard(b, aiColor) {
     let score = 0;
 
     for (let r = 0; r < 8; r++)
@@ -838,8 +838,11 @@ function evaluateBoard(b) {
             const value = PIECE_VALUES[piece.toLowerCase()];
             const centerBonus = (r>=2 && r<=5 && c>=2 && c<=5) ? 0.3 : 0;
 
-            if(isWhite(piece)) score -= value + centerBonus;
-            else score += value + centerBonus;
+            if(isWhite(piece)) {
+                score += (aiColor === "White" ? value : -value) + centerBonus;
+            } else {
+                score += (aiColor === "Black" ? value : -value) + centerBonus;
+            }
         }
     return score;
 }
